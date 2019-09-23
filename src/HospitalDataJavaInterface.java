@@ -16,22 +16,39 @@ public class HospitalDataJavaInterface {
     public static void main(String[] args) throws IOException {
         HospitalDataJavaInterface app = new HospitalDataJavaInterface();
 
-        //app.tableUpdate();
 
-        app.deleteAllRecordsFromDataBase();
+//        app.deleteAllRecordsFromDataBase();
+//
+//        String location = "D://personTableData.txt";
+//        app.readPersonTableData(location);
+//
+//
+//        String patientDoctorListLocation = "D:\\patientDoctorList.txt";
+//        app.readPatientDoctorListData(patientDoctorListLocation);
+//
+//        String treatmentDataListLocation = "D:\\treatmentData.txt";
+//        app.readTreatmentData(treatmentDataListLocation);
+//        app.tableUpdate();
 
-        String location = "D://personTableData.txt";
-        app.readPersonTableData(location);
+
+//        app.roomUtilizationOne();
+//        app.roomUtilizationTwo();
+//        app.roomUtilizationThree();
+
+//        app.patientInformationOne();
+//        app.patientInformationTwo();
+        String s = "1995-12-31 01:01:01";
+
+        //yyyy-mm-dd hh:mm:ss
+        String e = "2020-12-31 01:01:01";
+            Timestamp startDate = Timestamp.valueOf(s);
+            Timestamp endDate = Timestamp.valueOf(e);
+
+            app.patientInformationThree(startDate, endDate);
+    }
 
 
-        String patientDoctorListLocation = "D:\\patientDoctorList.txt";
-        app.readPatientDoctorListData(patientDoctorListLocation);
-
-        String treatmentDataListLocation = "D:\\treatmentData.txt";
-        app.readTreatmentData(treatmentDataListLocation);
-        app.tableUpdate();
-
-
+    private void patientInformation() {
     }
 
     private void readTreatmentData(String treatmentDataListLocation) throws IOException {
@@ -272,6 +289,123 @@ public class HospitalDataJavaInterface {
         }
     }
 
+    private void roomUtilizationOne(){
+        String sql = "select  room_id, person_first_name, person_last_name, admission_date from person where room_id IS NOT NULL";
+        try (Connection conn = this.connect();
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(sql)){
+            System.out.println("Rooms Number \tPatient First Name \t\t\t\tPatient Last Name \t\t\t\tAdmission Date");
+            while (rs.next()) {
+                System.out.println(rs.getString("room_id") + "\t\t\t\t" +
+                        rs.getString("person_first_name") + "\t\t\t" +
+                        rs.getString("person_last_name") + "\t\t\t" +
+                        rs.getDate("admission_date"));
+            }
+            System.out.println("\nEnd of Report");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void roomUtilizationTwo(){
+        String sql = "select  room_id from person where person_last_name is null";
+        try (Connection conn = this.connect();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)){
+            System.out.println("Rooms Available");
+            while (rs.next()) {
+                System.out.println(rs.getString("room_id") + "\t");
+            }
+            System.out.println("\nEnd of Report");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void roomUtilizationThree() {
+        String sql = "select  room_id, patient_first_name, patient_last_name, admission_date from rooms where patient_last_name is not null ";
+        try (Connection conn = this.connect();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)){
+            System.out.println("Rooms Number \tPatient First Name \t\t\t\tPatient Last Name \t\t\t\tAdmission Date ");
+            while (rs.next()) {
+                System.out.println(rs.getString("room_id") + "\t\t\t\t" +
+                        rs.getString("patient_first_name") + "\t\t\t" +
+                        rs.getString("patient_last_name") + "\t\t\t" +
+                        rs.getDate("admission_date"));
+            }
+            System.out.println("\nEnd of Report");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void patientInformationOne() {
+        String sql = "select  * from person where person_type = 'I' or person_type = 'O' ";
+        try (Connection conn = this.connect();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)){
+            System.out.println("First Name\t\t\t\t\t\t\tLast Name\t\t\t\t\t\tPatient ID\tEmergency Contact" +
+                    "\t\t\t\t\t\tEmergency Number\tInsurance Number\t\t\t\tInsurance Company\t\t\t\tPrimary MD" +
+                    "\t\t\t\t\t\t\tInitial DX\t\tAdmission Date\tDischarge Date");
+            while (rs.next()) {
+                System.out.println(rs.getString("person_first_name") + "\t\t\t\t" +
+                        rs.getString("person_last_name") + "\t\t\t" +
+                        rs.getInt("patient_id") + "\t\t\t" +
+                        rs.getString("emergency_contact_name") + "\t\t" +
+                        rs.getInt("emergency_contact_number") + "\t\t\t\t" +
+                        rs.getString("insurance_policy_number") + "\t\t" +
+                        rs.getString("insurance_policy_company") + "\t\t" +
+                        rs.getString("patient_doctor_last_name") + "\t\t" +
+                        rs.getString("initial_dx") + "\t\t" +
+                        rs.getDate("admission_date") + "\t\t" +
+                        rs.getDate("discharge_date"));
+            }
+            System.out.println("\nEnd of Report");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void patientInformationTwo() {
+
+        String sql = "select * from person where person_type = 'I';";
+        try (Connection conn = this.connect();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)){
+            System.out.println("Patient ID\t\tPatient First Name \t\t\t\tPatient Last Name");
+            while (rs.next()) {
+                System.out.println(rs.getString("patient_id") + "\t\t\t\t" +
+                        rs.getString("person_first_name") + "\t\t\t" +
+                        rs.getString("person_last_name"));
+            }
+            System.out.println("\nEnd of Report");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void patientInformationThree(Timestamp startDate, Timestamp endDate) {
+
+        String sql = "select * from treatment_table where treatment_timestamp between '" + startDate + "' and '" + endDate + "';";
+        try (Connection conn = this.connect();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)){
+            System.out.println("Patient Last Name\t\tTreatment ID");
+            while (rs.next()) {
+                System.out.println(rs.getString("patient_last_name") + "\t\t\t\t" +
+                        rs.getString("treatment_list_key"));
+            }
+            System.out.println("\nEnd of Report");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
     private void deleteAllRecordsFromDataBase(){
         String deleteAllRecords = "delete from administrator; delete from doctor; " +
                 "delete from in_patient; delete from nurse; delete from out_patient; delete from patient; " +
@@ -327,6 +461,11 @@ public class HospitalDataJavaInterface {
         String technicianUpdate = "insert into technician(person_first_name,person_last_name,person_id, employee_id) " +
                 "select employee_first_name, employee_last_name, person_id, employee_id from employee " +
                 "where employee_type = 'T';";
+        String roomUpdate = "insert into rooms(room_id, patient_first_name, patient_last_name, patient_id, person_id," +
+                " admission_date) " +
+                "select room_id, person_first_name, person_last_name, patient_id, person_id, admission_date " +
+                "from person " +
+                "where person_type = 'I';";
 
         try (Connection conn = this.connect();
              Statement stmt = conn.createStatement()
@@ -340,6 +479,7 @@ public class HospitalDataJavaInterface {
             stmt.executeUpdate(administratorUpdate);
             stmt.executeUpdate(nurseUpdate);
             stmt.executeUpdate(technicianUpdate);
+            stmt.executeUpdate(roomUpdate);
         } catch (Exception e) {
             e.printStackTrace();
         }
